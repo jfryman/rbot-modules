@@ -1,1 +1,11 @@
-Testing Replication to local directory and github
+This is the directory to place modules to be used in RBot. 
+Upon updating a module, and pushing to Git, simply issue a command to 
+the IRC bot
+  - !rescan
+
+This will automatically load any new plugins that are contained in this directory.
+
+Every module is also replicated automatically to github. Please
+be careful of any confidential information contained in an irc module.
+  - http://github.com/jfryman/rbot-modules
+
