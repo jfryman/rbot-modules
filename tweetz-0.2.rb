@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rss'
 require 'xmlsimple'
 
