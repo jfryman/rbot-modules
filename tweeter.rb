@@ -44,21 +44,17 @@ class TweeterPlugin < Plugin
     user = params[:user]
     feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
-    begin
-      json = get_json(feed)
-      if json.member?('error')
-        m.reply "That is an invalid Twitter user"
-      else
-        save_value('username', user, user)
-        save_value('channel', user, m.channel.downcase)
-        save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
-        save_value('feed', user, feed)
-        save_value('action', user, add_timer(user))
-        m.reply "Latest tweet: #{json[0]['text']} #{json[0]['created_at']}"
-        m.reply "I am now following #{user}"
-      end
-    rescue
-      m.reply "I seem to be having an error adding that user. Try again later."
+    json = get_json(feed)
+    if json.member?('error')
+      m.reply "That is an invalid Twitter user"
+    else
+      save_value('username', user, user)
+      save_value('channel', user, m.channel.downcase)
+      save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
+      save_value('feed', user, feed)
+      save_value('action', user, add_timer(user))
+      m.reply "Latest tweet: #{json[0]['text']} #{json[0]['created_at']}"
+      m.reply "I am now following #{user}"
     end
   end
   
