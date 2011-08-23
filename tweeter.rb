@@ -143,7 +143,7 @@ class TweeterPlugin < Plugin
   end
   
   def user_from_key_value(key)
-    feed.split("|")[1]
+    key.split("|")[1]
   end
 end
 
