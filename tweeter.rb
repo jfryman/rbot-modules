@@ -5,11 +5,11 @@
 # Licensed under the terms of the GNU General Public License v2 or higher\
 # https://api.twitter.com/1/statuses/user_timeline.json?screen_name=jfryman
 
-include 'rubygems'
-include 'net/https'
-include 'time'
-include 'uri'
-include 'json'
+require 'rubygems'
+require 'net/https'
+require 'time'
+require 'uri'
+require 'json'
 
 class TweeterPlugin < Plugin
   def initalize
