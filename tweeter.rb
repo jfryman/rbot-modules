@@ -90,26 +90,25 @@ class TweeterPlugin < Plugin
     m.reply "Remaining API hits: #{check_rate_limit()}"
   end
   
-  def add_timer(user, time_period = 600.0)
-    channel = get_value("channel", user)
+  def add_timer(user, time_period=600.0)
+    channel = get_value('channel', user)
     if not time_period
       time_period = 600.0
     end
     
-    save_value("nextupdate", user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
-    
-    @bot.timer.add(time_period) {      
+    save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+    @bot.timer.add(time_period) {
       if check_rate_limit() > 0
         json = get_json(get_value('feed', user))
-        json.each { |item| 
+        json.each { |item|
           mydate = Time.parse(item['created_at']).strftime("%Y%m%d%H%M%S")
           
-          if mydate > get_value("lastupdate", user)
+          if mydate > get_value('lastupdate', user)
             @bot.say(channel, "Tweeter: #{item['text']} [#{item['created_at']}]")
           end
           
-          save_value("lastupdate", user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S")
-          save_value("nextupdate", user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+          save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
+          save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
         }
       end
     }
