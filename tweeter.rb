@@ -42,7 +42,7 @@ class TweeterPlugin < Plugin
   
   def follow(m, params)
     user = params[:user]
-    feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
+    feed = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
     begin
       json = get_json(feed)
