@@ -58,7 +58,7 @@ class TweeterPlugin < Plugin
         m.reply "I am now following #{user}"
       end
     rescue
-      m.reply "I seem to be having an error adding that user. Try again later"
+      m.reply "I seem to be having an error adding that user. Try again later. #{user}"
     end
   end
   
