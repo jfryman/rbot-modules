@@ -107,18 +107,16 @@ class TweeterPlugin < Plugin
             @bot.say(channel, "Tweeter: #{item['text']} [#{item['created_at']}]")
           end
           
-          save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
-          save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+          puts "Saving Value: #{Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))}"
+          #save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
+          #save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
         }
       end
     }
   end
 
   def help(plugin, topic="")
-    "tweeter follow <user> => Follow Twitter user.\n
-     tweeter remove <user> => Removes a user from the list of users I'm following\n
-     tweeter update        => Forces an update of followed Twitter users\n
-     tweeter list          => Lists the twitter feeds I'm following"
+    "tweeter follow <user>\t=> Follow Twitter user.\ntweeter remove <user>\t=> Removes a user from the list of users I'm following\ntweeter list\t=> Lists the twitter feeds I'm following"
   end
   
   def check_rate_limit
