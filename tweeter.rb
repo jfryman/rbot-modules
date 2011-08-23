@@ -42,7 +42,7 @@ class TweeterPlugin < Plugin
   
   def follow(m, params)
     user = params[:user]
-    feed = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
+    feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
     begin
       json = get_json(feed)
@@ -58,7 +58,7 @@ class TweeterPlugin < Plugin
         m.reply "I am now following #{user}"
       end
     rescue
-      m.reply "I seem to be having an error adding that user. Try again later. #{user}"
+      m.reply "I seem to be having an error adding that user. Try again later."
     end
   end
   
@@ -128,8 +128,14 @@ class TweeterPlugin < Plugin
   end
   
   def get_json(url)
-    data = @bot.httputil.get(url)
-    JSON.parse(data)
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = http.request(request)
+    JSON.parse(response.body)
   end
   
   def save_value(prefix,identifier, val)
