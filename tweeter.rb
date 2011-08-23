@@ -45,7 +45,7 @@ class TweeterPlugin < Plugin
     feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
     json = get_json(feed)
-    if json['error']
+    if json.has_value?('error')
       m.reply "That is an invalid Twitter user"
     else
       save_value('username', user, user)
