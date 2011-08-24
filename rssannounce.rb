@@ -106,7 +106,7 @@ class RssannouncePlugin < Plugin
       mydate = rss.items.first.updated.strftime("%Y%m%d%H%M%S")
         
       if mydate > get_value('lastupdate', feed)
-        @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{irc.items.first.link}")
+        @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
       end
         
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
