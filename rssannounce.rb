@@ -25,7 +25,7 @@ class RssannouncePlugin < Plugin
       end
     end
     
-    time_frame = 600.0
+    time_frame = 600
     @registry.keys.each { |key|
       if key =~ /feed\|/
         # Get the url from our feed key
@@ -94,11 +94,13 @@ class RssannouncePlugin < Plugin
     end
   end
   
-  def add_timer(feed, time_period=600.0)
+  def add_timer(feed, time_period = 600.0)
     channel = get_value('channel', feed)
     if not time_period
       time_period = 600.0
     end
+    
+    save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
     
     @bot.timer.add(time_period) {
       rss    = get_rss(get_value('feed', feed))
