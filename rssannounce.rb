@@ -109,7 +109,7 @@ class RssannouncePlugin < Plugin
         
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
       save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
-    end
+    }
   end
 
   def help(plugin, topic="")
