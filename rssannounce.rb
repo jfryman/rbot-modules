@@ -11,6 +11,7 @@ require 'simple-rss'
 require 'open-uri'
 require 'time'
 require 'uri'
+require 'htmlentities'
 
 class RssannouncePlugin < Plugin
   def initalize
@@ -52,7 +53,7 @@ class RssannouncePlugin < Plugin
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
       save_value('action', feed, add_timer(feed))
     
-      m.reply "#{rss.items.first.title} :: #{rss.items.first.link}"
+      m.reply "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}"
       m.reply "I am now following #{rss.channel.title}"
     rescue => e
       m.reply "I cannot complete that operation: #{e.message}"
@@ -105,7 +106,7 @@ class RssannouncePlugin < Plugin
       mydate = rss.items.first.updated.strftime("%Y%m%d%H%M%S")
         
       if mydate > get_value('lastupdate', feed)
-        @bot.say(channel, "#{rss.items.first.title} :: #{irc.items.first.link}")
+        @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{irc.items.first.link}")
       end
         
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
