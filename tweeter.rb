@@ -165,5 +165,5 @@ end
 plugin = TweeterPlugin.new
 plugin.map 'tweeter follow :user', :action => 'follow'
 plugin.map 'tweeter remove :user', :action => 'remove'
-plugin.map 'tweeter list',         :action => 'list'
+plugin.map 'tweeter list', :action => 'list'
 plugin.map 'tweeter'
