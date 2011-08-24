@@ -30,10 +30,11 @@ class RssannouncePlugin < Plugin
       if key =~ /feed\|/
         # Get the url from our feed key
         feed = feed_from_key_value(key)
-      
+        channel = get_value('channel', feed)
         # This does a few things:  
         #   - Creates a new timer. 
         #   - Stores the timer action_id
+        @bot.say(channel, "Adding Action for #{feed}")
         save_value("action", feed, add_timer(feed, time_frame))
       
         # Stagger our saved feed updates, so we're not hammering RSS feeds.
@@ -101,10 +102,12 @@ class RssannouncePlugin < Plugin
     end
     
     save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
-    
+    @bot.say(channel, "I'm in the add_timer event")
     @bot.timer.add(time_period) {
       rss    = get_rss(get_value('feed', feed))
       mydate = rss.items.first.updated.strftime("%Y%m%d%H%M%S")
+      
+      @bot.say(channel, "I'm adding a new timer")
         
       if mydate > get_value('lastupdate', feed)
         @bot.say(channel, "#{get_value('name', feed)} :: #{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
