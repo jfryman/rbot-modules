@@ -34,7 +34,7 @@ class RssannouncePlugin < Plugin
         # This does a few things:  
         #   - Creates a new timer. 
         #   - Stores the timer action_id
-        save_value("action", url, add_timer(feed, time_frame))
+        save_value("action", feed, add_timer(feed, time_frame))
       
         # Stagger our saved feed updates, so we're not hammering RSS feeds.
         time_frame += 60
@@ -105,7 +105,7 @@ class RssannouncePlugin < Plugin
       mydate = rss.items.first.updated.strftime("%Y%m%d%H%M%S")
         
       if mydate > get_value('lastupdate', feed)
-        @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
+        @bot.say(channel, "#{get_value('name', feed)} :: #{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
       end
         
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
