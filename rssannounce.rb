@@ -56,6 +56,7 @@ class RssannouncePlugin < Plugin
       m.reply "I am now following #{rss.channel.title}"
     rescue => e
       m.reply "I cannot complete that operation: #{e.message}"
+      m.reply e.backtrace
     end
   end
   
