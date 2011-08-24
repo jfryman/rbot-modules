@@ -138,7 +138,7 @@ class RssannouncePlugin < Plugin
 end
 
 # Begin Plugin Instantiation. 
-plugin = TweeterPlugin.new
+plugin = RssannouncePlugin.new
 plugin.map 'rssannounce follow :feed', :action => 'follow'
 plugin.map 'rssannounce remove :feed', :action => 'remove'
 plugin.map 'rssannounce list',         :action => 'list'
