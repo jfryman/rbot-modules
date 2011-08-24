@@ -142,4 +142,4 @@ plugin = TweeterPlugin.new
 plugin.map 'rssannounce follow :feed', :action => 'follow'
 plugin.map 'rssannounce remove :feed', :action => 'remove'
 plugin.map 'rssannounce list',         :action => 'list'
-plugin.map 'tweeter'
+plugin.map 'rssannounce'
