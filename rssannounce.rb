@@ -100,7 +100,6 @@ class RssannouncePlugin < Plugin
       time_period = 5.0
     end
     
-    save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
     @bot.timer.add(time_period) {
       rss    = get_rss(get_value('feed', feed))
       mydate = rss.items.first.updated.strftime("%Y%m%d%H%M%S")
@@ -109,8 +108,8 @@ class RssannouncePlugin < Plugin
         @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
       end
         
-      #save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
-      #save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+      save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
+      save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
     }
   end
 
