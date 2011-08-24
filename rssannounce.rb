@@ -25,7 +25,7 @@ class RssannouncePlugin < Plugin
       end
     end
     
-    time_frame = 5.0
+    time_frame = 600.0
     @registry.keys.each { |key|
       if key =~ /username\|/
         # Get the url from our feed key
@@ -37,7 +37,7 @@ class RssannouncePlugin < Plugin
         save_value("action", url, add_timer(user, time_frame))
       
         # Stagger our saved feed updates, so we're not hammering RSS feeds.
-        time_frame += 5.0
+        time_frame += 60
       end
     }
   end
@@ -94,10 +94,10 @@ class RssannouncePlugin < Plugin
     end
   end
   
-  def add_timer(feed, time_period=5.0)
+  def add_timer(feed, time_period=600.0)
     channel = get_value('channel', feed)
     if not time_period
-      time_period = 5.0
+      time_period = 600.0
     end
     
     @bot.timer.add(time_period) {
