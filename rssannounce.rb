@@ -62,7 +62,7 @@ class RssannouncePlugin < Plugin
   end
   
   def remove(m, params)
-    user       = params[:feed]
+    feed       = params[:feed]
     action_id  = get_value('action', feed)
     feed_title = get_value('name', feed)
     
@@ -94,10 +94,10 @@ class RssannouncePlugin < Plugin
     end
   end
   
-  def add_timer(feed, time_period=600.0)
+  def add_timer(feed, time_period=5.0)
     channel = get_value('channel', feed)
     if not time_period
-      time_period = 600.0
+      time_period = 5.0
     end
     
     save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
@@ -109,8 +109,8 @@ class RssannouncePlugin < Plugin
         @bot.say(channel, "#{HTMLEntities.new.decode(rss.items.first.title)} :: #{rss.items.first.link}")
       end
         
-      save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
-      save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+      #save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
+      #save_value('nextupdate', feed, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
     }
   end
 
