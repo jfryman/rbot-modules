@@ -52,7 +52,7 @@ class RssannouncePlugin < Plugin
       save_value('lastupdate', feed, rss.items.first.updated.strftime("%Y%m%d%H%M%S"))
       save_value('action', feed, add_timer(feed))
     
-      irc_update(m, rss.items.first.title, rss.items.first.link)
+      m.reply "#{rss.items.first.title} :: #{rss.items.first.link}"
       m.reply "I am now following #{rss.channel.title}"
     rescue => e
       m.reply "I cannot complete that operation: #{e.message}"
@@ -131,10 +131,6 @@ class RssannouncePlugin < Plugin
   
   def feed_from_key_value(key)
     key.split("|")[1]
-  end
-  
-  def irc_update(m, title, link)
-    m.reply "#{title} :: #{link}"
   end
 end
 
