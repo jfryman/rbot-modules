@@ -43,7 +43,7 @@ class TweeterPlugin < Plugin
   def follow(m, params)
     begin
       user = params[:user]
-      feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
+      feed = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
       json = get_json(feed)
       if json.member?('error')
@@ -141,7 +141,11 @@ class TweeterPlugin < Plugin
     
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
-    JSON.parse(response.body)
+    begin
+      JSON.parse(response.body)
+    rescue => e
+      m.reply "Unable to get valid JSON"
+      m.reply e.message
   end
   
   def save_value(prefix,identifier, val)
