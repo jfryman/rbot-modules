@@ -85,7 +85,7 @@ class RssannouncePlugin < Plugin
     @registry.keys.each { |key|
       if key =~ /feed\|/
         feed = feed_from_key_value(key.to_s)
-        m.reply("Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update in #{(get_value("nextupdate", feed).to_i - Time.now.strftime("%Y%m%d%H%M%S").to_i) / 60} minutes.")
+        m.reply("Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update in #{(get_value("nextupdate", feed).to_i - Time.now.strftime("%Y%m%d%H%M%S").to_i) / 60} minutes. RSS Feed: #{get_value('feed', feed)}")
         feed_count += 1
       end
     }
