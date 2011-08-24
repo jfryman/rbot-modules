@@ -41,20 +41,25 @@ class TweeterPlugin < Plugin
   end
   
   def follow(m, params)
-    user = params[:user]
-    feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
+    begin
+      user = params[:user]
+      feed = "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=#{user}"
     
-    json = get_json(feed)
-    if json.member?('error')
-      m.reply "That is an invalid Twitter user"
-    else
-      save_value('username', user, user)
-      save_value('channel', user, m.channel.downcase)
-      save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
-      save_value('feed', user, feed)
-      save_value('action', user, add_timer(user))
-      m.reply "Latest tweet: #{json[0]['text']} #{json[0]['created_at']}"
-      m.reply "I am now following #{user}"
+      json = get_json(feed)
+      if json.member?('error')
+        m.reply "That is an invalid Twitter user"
+      else
+        save_value('username', user, user)
+        save_value('channel', user, m.channel.downcase)
+        save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
+        save_value('feed', user, feed)
+        save_value('action', user, add_timer(user))
+        m.reply "Latest tweet: #{json[0]['text']} #{json[0]['created_at']}"
+        m.reply "I am now following #{user}"
+      end
+    rescue => e
+      m.reply "It turns out the Twitter API sucks. Try again later. "
+      m.reply e.message
     end
   end
   
@@ -91,27 +96,32 @@ class TweeterPlugin < Plugin
   end
   
   def add_timer(user, time_period=600.0)
-    channel = get_value('channel', user)
-    if not time_period
-      time_period = 600.0
-    end
-    
-    save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
-    @bot.timer.add(time_period) {
-      if check_rate_limit() > 0
-        json = get_json(get_value('feed', user))
-        json.each { |item|
-          mydate = Time.parse(item['created_at']).strftime("%Y%m%d%H%M%S")
-          
-          if mydate > get_value('lastupdate', user)
-            @bot.say(channel, "Tweeter: #{item['text']} [#{item['created_at']}]")
-          end
-
-          save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
-          save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
-        }
+    begin
+      channel = get_value('channel', user)
+      if not time_period
+        time_period = 600.0
       end
-    }
+    
+      save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+      @bot.timer.add(time_period) {
+        if check_rate_limit() > 0
+          json = get_json(get_value('feed', user))
+          json.each { |item|
+            mydate = Time.parse(item['created_at']).strftime("%Y%m%d%H%M%S")
+          
+            if mydate > get_value('lastupdate', user)
+              @bot.say(channel, "Tweeter: #{item['text']} [#{item['created_at']}]")
+            end
+
+            save_value('lastupdate', user, Time.parse(json[0]['created_at']).strftime("%Y%m%d%H%M%S"))
+            save_value('nextupdate', user, (Time.now + time_period).strftime("%Y%m%d%H%M%S"))
+          }
+        end
+      }
+    rescue
+      m.reply "It turns out the Twitter API sucks. Try again later."
+      m.reply e.message
+    end
   end
 
   def help(plugin, topic="")
