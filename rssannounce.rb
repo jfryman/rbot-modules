@@ -27,14 +27,14 @@ class RssannouncePlugin < Plugin
     
     time_frame = 600.0
     @registry.keys.each { |key|
-      if key =~ /username\|/
+      if key =~ /feed\|/
         # Get the url from our feed key
-        user = user_from_key_value(key)
+        feed = feed_from_key_value(key)
       
         # This does a few things:  
         #   - Creates a new timer. 
         #   - Stores the timer action_id
-        save_value("action", url, add_timer(user, time_frame))
+        save_value("action", url, add_timer(feed, time_frame))
       
         # Stagger our saved feed updates, so we're not hammering RSS feeds.
         time_frame += 60
