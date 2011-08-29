@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check @ #{@timer.next}"
   end
 
   def dontwatchfeed(m, params)
