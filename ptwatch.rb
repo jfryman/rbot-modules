@@ -22,8 +22,8 @@ class PTWatchPlugin < Plugin
     check_feed
   end
 
-  def debug
-    @bot.say '#ctp', "really? #{@timer.to_s}"
+  def debug(m, params)
+    m.reply '#ctp', "really? #{@timer.to_s}"
   end
 
   def stop
@@ -42,6 +42,7 @@ class PTWatchPlugin < Plugin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }
       new.each { output(item) }
+      @last_updated = Time.now
     rescue
       @bot.say @bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed"
       cleanup
