@@ -18,7 +18,7 @@ class PTWatchPlugin < Plugin
     @last_updated = Time.now
   end
 
-  def watchfeed
+  def watchfeed(m, params)
     check_feed
   end
 
@@ -26,7 +26,7 @@ class PTWatchPlugin < Plugin
     m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s}"
   end
 
-  def dontwatchfeed(m,params)
+  def dontwatchfeed(m, params)
     if @timer
       @bot.timer.remove(@timer)
       m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
