@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply '#ctp', "really? #{@timer.to_s}"
+    m.reply "really? #{@timer.to_s}"
   end
 
   def stop
