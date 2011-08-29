@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug
-    @bot.say(@bot.config['ptwatch.channel'], "really? #{@timer.to_s}")
+    @bot.say('#ctp', "really? #{@timer.to_s}")
   end
 
   def stop
