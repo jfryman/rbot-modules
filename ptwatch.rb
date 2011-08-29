@@ -42,8 +42,8 @@ class PTWatchPlugin < Plugin
         @bot.say '#ctp', "#{HTMLEntities.new.decode(item.title)} :: #{event.link}"
       end
       @last_updated = Time.now
-    rescue
-      @bot.say '#ctp', "the plugin PTWatchPlugin failed"
+    rescue Exception => e
+      @bot.say '#ctp', "the plugin PTWatchPlugin failed #{e.to_s}"
       cleanup
     end
 
