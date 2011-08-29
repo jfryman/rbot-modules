@@ -18,7 +18,7 @@ class PTWatchPlugin < Plugin
     @last_updated = Time.now
   end
 
-  def start
+  def watchfeed
     check_feed
   end
 
@@ -26,7 +26,7 @@ class PTWatchPlugin < Plugin
     m.reply "the current timer is: #{@timer.to_s}"
   end
 
-  def stop(m,params)
+  def dontwatchfeed(m,params)
     if @timer
       @bot.timer.remove(@timer)
       m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
@@ -60,6 +60,6 @@ end
 
 # Begin Plugin Instantiation. 
 plugin = PTWatchPlugin.new
-plugin.map 'ptwatch start', :action => 'start'
-plugin.map 'ptwatch stop', :action => 'stop'
+plugin.map 'ptwatch start', :action => 'watchfeed'
+plugin.map 'ptwatch stop', :action => 'dontwatchfeed'
 plugin.map 'ptwatch help', :action => 'debug'
