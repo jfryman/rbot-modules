@@ -37,7 +37,7 @@ class PTWatchPlugin < Plugin
     @bot.say '#ctp', 'i checked the rss feed for ya buddy'
     begin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
-      new = rss.items.collect { |item| item if item[:updated] > @last_updated }
+      new = rss.items.collect { |item| item if item[:updated] > @last_updated }.compact
       new.each do |item| 
         @bot.say '#ctp', "#{item.title} :: #{item.link}"
       end
