@@ -6,7 +6,7 @@
 #
 require 'rubygems'
 require 'simple-rss'
-require 'openuri'
+require 'open-uri'
 
 class PTWatchPlugin < Plugin
   def initialize
