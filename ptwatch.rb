@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s}"
   end
 
   def dontwatchfeed(m,params)
@@ -34,6 +34,7 @@ class PTWatchPlugin < Plugin
   end
 
   def check_feed
+    @bot.say '#ctp', 'i checked the rss feed for ya buddy'
     begin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }
@@ -45,6 +46,7 @@ class PTWatchPlugin < Plugin
       @bot.say '#ctp', "the plugin PTWatchPlugin failed"
       cleanup
     end
+
     set_timer
   end
 
