@@ -23,25 +23,23 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "really? #{@timer.to_s}"
+    m.reply "the current timer is: #{@timer.to_s}"
   end
 
-  def stop
+  def stop(m,params)
     if @timer
       @bot.timer.remove(@timer)
-      @bot.say @bot.config['ptwatch.channel'], "no longer watching PT, stopping timer #{@timer.to_s}"
+      m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
     end
-  end
-
-  def output(event)
-    @bot.say @bot.config['ptwatch.channel'], "#{HTMLEntities.new.decode(event.title)} :: #{event.link}"
   end
 
   def check_feed
     begin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }
-      new.each { output(item) }
+      new.each do |item| 
+        @bot.say @bot.config['ptwatch.channel'], "#{HTMLEntities.new.decode(item.title)} :: #{event.link}"
+      end
       @last_updated = Time.now
     rescue
       @bot.say @bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed"
