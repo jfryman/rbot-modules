@@ -12,7 +12,7 @@ class PTWatchPlugin < Plugin
   def initialize
     super
     Config.register Config::StringValue.new('ptwatch.url',:default => "https://www.pivotaltracker.com/projects/344511/activities/d5a0f1e5f569ad6926a8ba1ae8f8d629", :desc => 'RSS Feed of the pivotal tracker page')
-    Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", desc => 'Channel to report updates')
+    Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", :desc => 'Channel to report updates')
     Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 300, :desc => 'number of seconds to check (5 minutes is the default)')
 
     @last_updated = Time.now
