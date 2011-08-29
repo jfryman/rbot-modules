@@ -22,10 +22,14 @@ class PTWatchPlugin < Plugin
     check_feed
   end
 
+  def debug
+    @bot.say(@bot.config['ptwatch.channel'], "really? #{@timer.to_s}")
+  end
+
   def stop
     if @timer
       @bot.timer.remove(@timer)
-      @bot.say(@bot.config['ptwatch.channel'], "no longer watching PT")
+      @bot.say(@bot.config['ptwatch.channel'], "no longer watching PT, stopping timer #{@timer.to_s}")
     end
   end
 
@@ -58,4 +62,5 @@ end
 # Begin Plugin Instantiation. 
 plugin = PTWatchPlugin.new
 plugin.map 'ptwatch start', :action => 'start'
-plugin.map 'ptwatch stop', :action => 'remove'
+plugin.map 'ptwatch stop', :action => 'stop'
+plugin.map 'ptwatch help', :action => 'debug'
