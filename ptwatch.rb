@@ -23,18 +23,18 @@ class PTWatchPlugin < Plugin
   end
 
   def debug
-    @bot.say('#ctp', "really? #{@timer.to_s}")
+    @bot.say '#ctp', "really? #{@timer.to_s}"
   end
 
   def stop
     if @timer
       @bot.timer.remove(@timer)
-      @bot.say(@bot.config['ptwatch.channel'], "no longer watching PT, stopping timer #{@timer.to_s}")
+      @bot.say @bot.config['ptwatch.channel'], "no longer watching PT, stopping timer #{@timer.to_s}"
     end
   end
 
   def output(event)
-    @bot.say(@bot.config['ptwatch.channel'], "#{HTMLEntities.new.decode(event.title)} :: #{event.link}")
+    @bot.say @bot.config['ptwatch.channel'], "#{HTMLEntities.new.decode(event.title)} :: #{event.link}"
   end
 
   def check_feed
@@ -43,7 +43,7 @@ class PTWatchPlugin < Plugin
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }
       new.each { output(item) }
     rescue
-      @bot.say(@bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed")
+      @bot.say @bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed"
       cleanup
       set_timer
     end
