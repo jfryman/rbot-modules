@@ -39,7 +39,7 @@ class PTWatchPlugin < Plugin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }
       new.each do |item| 
-        @bot.say '#ctp', "#{HTMLEntities.new.decode(item.title)} :: #{event.link}"
+        @bot.say '#ctp', "#{item.title} :: #{item.link}"
       end
       @last_updated = Time.now
     rescue Exception => e
