@@ -12,19 +12,26 @@ class PTWatchPlugin < Plugin
     super
     Config.register Config::StringValue.new('ptwatch.url',:default => "https://www.pivotaltracker.com/projects/344511/activities/d5a0f1e5f569ad6926a8ba1ae8f8d629", :desc => 'RSS Feed of the pivotal tracker page')
     Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", :desc => 'Channel to report updates')
-    Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 300, :desc => 'number of seconds to check (5 minutes is the default)')
+    Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 600, :desc => 'number of seconds to check (5 minutes is the default)')
 
     @last_updated = Time.now - 86400
     @timer = nil
   end
 
   def watchfeed(m, params)
-    check_feed
+    if @timer.nil?
+      check_feed
+    else
+    	@bot.say @bot.config['ptwatch.channel'] "I'm already watching your project. I'll check again in #{time_til}."
   end
 
   def debug(m, params)
-    time_to = @timer.respond_to?(:in) ? @timer.in : ''
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check #{time_to}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check #{time_til}"
+  end
+
+  def time_til
+    #@timer.respond.to?(:in) ? @timer.in : 'unknown'
+    @bot.timer[@timer].respond_to?(:in) ? @bot.timer[@timer].in : 'unknown'
   end
 
   def dontwatchfeed(m, params)
@@ -61,7 +68,7 @@ class PTWatchPlugin < Plugin
 
 end
 
-# Begin Plugin Instantiation. 
+# Begin Plugin Instantiation.
 plugin = PTWatchPlugin.new
 plugin.map 'ptwatch start', :action => 'watchfeed'
 plugin.map 'ptwatch stop', :action => 'dontwatchfeed'
