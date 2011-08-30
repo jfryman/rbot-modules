@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
 
   def startfeed(m, params)
     if @timer.nil?
-      check_feed
+    	set_timer(@bot.config['ptwatch.seconds'])
     else
       m.reply "I'm already watching your project with timer #{@timer.to_s}"
     end
@@ -58,9 +58,9 @@ class PTWatchPlugin < Plugin
     @bot.timer.remove(@timer)
   end
 
-  def set_timer
-    unless !timer.nil?
-      @timer = @bot.timer.add(:period => @bot.config['ptwatch.seconds']) { check_feed }
+  def set_timer(interval)
+    unless !@timer.nil?
+      @timer = @bot.timer.add(:period => interval) { check_feed }
     end
   end
 
