@@ -23,7 +23,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    timer.responds_to(:in) ? in = timer.in : in = ''
+    in = timer.responds_to(:in) ? timer.in : ''
     m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check #{in}"
   end
 
