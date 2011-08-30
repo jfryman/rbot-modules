@@ -25,7 +25,7 @@ class PTWatchPlugin < Plugin
     if @timer.nil?
       check_feed
     else
-      @bot.say @bot.config['ptwatch.channel'], "I'm already watching your project. I'll check again in #{time_til}."
+      m.reply "I'm already watching your project. I'll check again in #{time_til}."
     end
   end
 
@@ -41,6 +41,7 @@ class PTWatchPlugin < Plugin
     if @timer
       @bot.timer.remove(@timer)
       m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
+      @timer = nil
     end
   end
 
@@ -54,10 +55,7 @@ class PTWatchPlugin < Plugin
       @last_updated = rss.updated
     rescue Exception => e
       @bot.say @bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed #{e.to_s}"
-      cleanup
     end
-
-    set_timer
   end
 
   def cleanup
@@ -66,7 +64,9 @@ class PTWatchPlugin < Plugin
   end
 
   def set_timer
-    @timer = @bot.timer.add(@bot.config['ptwatch.seconds']) { check_feed }
+    unless !timer.nil?
+      @timer = @bot.timer.add({:period => @bot.config['ptwatch.seconds'], :repeat => true }) { check_feed }
+    end
   end
 
 end
