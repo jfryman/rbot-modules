@@ -1,6 +1,9 @@
 # :title: Pivotal Tracker RSS feed reader for rbot
-# Licensed under the terms of the GNU General Public License v2 or higher\
+# Licensed under the terms of the GNU General Public License v2 or higher
 # Copyright Aziz Shamim and James Fryman 2011
+#
+# TODO: Refactor out the channel config, add a per channel comm
+# TODO: Refactor out the Config.register, add a per channel config
 
 require 'rubygems'
 require 'simple-rss'
@@ -22,7 +25,8 @@ class PTWatchPlugin < Plugin
     if @timer.nil?
       check_feed
     else
-    	@bot.say @bot.config['ptwatch.channel'] "I'm already watching your project. I'll check again in #{time_til}."
+      @bot.say @bot.config['ptwatch.channel'], "I'm already watching your project. I'll check again in #{time_til}."
+    end
   end
 
   def debug(m, params)
