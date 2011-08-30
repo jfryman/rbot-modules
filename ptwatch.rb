@@ -17,7 +17,7 @@ class PTWatchPlugin < Plugin
     Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", :desc => 'Channel to report updates')
     Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 600, :desc => 'number of seconds to check (5 minutes is the default)')
 
-    @last_updated = Time.now - 86400
+    @last_updated = Time.now - 3600
     @timer = nil
   end
 
@@ -54,12 +54,13 @@ class PTWatchPlugin < Plugin
   end
 
   def cleanup
+    super
     @bot.timer.remove(@timer)
   end
 
   def set_timer
     unless !timer.nil?
-      @timer = @bot.timer.add({:period => @bot.config['ptwatch.seconds'], :repeat => true }) { check_feed }
+      @timer = @bot.timer.add(:period => @bot.config['ptwatch.seconds']) { check_feed }
     end
   end
 
