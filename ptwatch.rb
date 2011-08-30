@@ -1,9 +1,7 @@
-# :title: Public RSS Announcer Plugin for rBot
-# slightly modified from tweeter.rb code for rBot
-#
+# :title: Pivotal Tracker RSS feed reader for rbot
 # Licensed under the terms of the GNU General Public License v2 or higher\
-# https://api.twitter.com/1/statuses/user_timeline.json?screen_name=jfryman
-#
+# Copyright Aziz Shamim and James Fryman 2011
+
 require 'rubygems'
 require 'simple-rss'
 require 'open-uri'
@@ -25,7 +23,8 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check in #{@timer.in}"
+    timer.responds_to(:in) ? in = timer.in : in = ''
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check #{in}"
   end
 
   def dontwatchfeed(m, params)
