@@ -7,6 +7,7 @@
 require 'rubygems'
 require 'simple-rss'
 require 'open-uri'
+require 'htmlentities'
 
 class PTWatchPlugin < Plugin
   def initialize
@@ -35,14 +36,14 @@ class PTWatchPlugin < Plugin
   end
 
   def check_feed
-    @bot.say '#ctp', 'i checked the rss feed for ya buddy'
+    @bot.say '#ctp', 'I checked Pivotal Tracker *nix_automations feed'
     begin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }.compact
       new.each do |item| 
-        @bot.say '#ctp', "#{item.title} :: #{item.link}"
+        @bot.say '#ctp', "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
-      @last_updated = Time.now
+      @last_updated = rss.updated
     rescue Exception => e
       @bot.say '#ctp', "the plugin PTWatchPlugin failed #{e.to_s}"
       cleanup
