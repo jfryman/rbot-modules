@@ -25,7 +25,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check @ #{@timer}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check in #{@timer.in}"
   end
 
   def dontwatchfeed(m, params)
@@ -36,16 +36,15 @@ class PTWatchPlugin < Plugin
   end
 
   def check_feed
-    @bot.say '#ctp', 'I checked Pivotal Tracker *nix_automations feed'
     begin
       rss = SimpleRSS.parse open(@bot.config['ptwatch.url'])
       new = rss.items.collect { |item| item if item[:updated] > @last_updated }.compact
       new.each do |item| 
-        @bot.say '#ctp', "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
+        @bot.say @bot.config['ptwatch.channel'], "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       @last_updated = rss.updated
     rescue Exception => e
-      @bot.say '#ctp', "the plugin PTWatchPlugin failed #{e.to_s}"
+      @bot.say @bot.config['ptwatch.channel'], "the plugin PTWatchPlugin failed #{e.to_s}"
       cleanup
     end
 
