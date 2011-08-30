@@ -15,7 +15,8 @@ class PTWatchPlugin < Plugin
     Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", :desc => 'Channel to report updates')
     Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 300, :desc => 'number of seconds to check (5 minutes is the default)')
 
-    @last_updated = Time.now
+    @last_updated = Time.now - 86400
+    @timer = nil
   end
 
   def watchfeed(m, params)
@@ -23,7 +24,7 @@ class PTWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check @ #{@timer.next}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check @ #{@timer}"
   end
 
   def dontwatchfeed(m, params)
@@ -52,6 +53,7 @@ class PTWatchPlugin < Plugin
 
   def cleanup
     @bot.timer.remove(@timer)
+    @timer = nil
   end
 
   def set_timer
