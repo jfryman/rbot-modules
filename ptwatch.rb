@@ -60,7 +60,7 @@ class PTWatchPlugin < Plugin
 
   def set_timer(interval)
     unless !@timer.nil?
-      @timer = @bot.timer.add(:period => interval) { check_feed }
+      @timer = @bot.timer.add(interval) { check_feed }
     end
   end
 
