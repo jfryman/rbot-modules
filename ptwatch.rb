@@ -34,7 +34,7 @@ class PTWatchPlugin < Plugin
   end
 
   def time_til
-    @timer.respond.to?(:in) ? @timer.in : 'unknown'
+    @timer.respond_to?(:in) ? @timer.in : 'unknown'
   end
 
   def dontwatchfeed(m, params)
