@@ -21,27 +21,22 @@ class PTWatchPlugin < Plugin
     @timer = nil
   end
 
-  def watchfeed(m, params)
+  def startfeed(m, params)
     if @timer.nil?
       check_feed
     else
-      m.reply "I'm already watching your project. I'll check again in #{time_til}."
+      m.reply "I'm already watching your project with timer #{@timer.to_s}"
     end
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s} - next check #{time_til}"
+    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s}"
   end
 
-  def time_til
-    @timer.respond_to?(:in) ? @timer.in : 'unknown'
-  end
-
-  def dontwatchfeed(m, params)
+  def stopfeed(m, params)
     if @timer
       @bot.timer.remove(@timer)
       m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
-      @timer = nil
     end
   end
 
@@ -60,7 +55,6 @@ class PTWatchPlugin < Plugin
 
   def cleanup
     @bot.timer.remove(@timer)
-    @timer = nil
   end
 
   def set_timer
@@ -73,6 +67,6 @@ end
 
 # Begin Plugin Instantiation.
 plugin = PTWatchPlugin.new
-plugin.map 'ptwatch start', :action => 'watchfeed'
-plugin.map 'ptwatch stop', :action => 'dontwatchfeed'
-plugin.map 'ptwatch help', :action => 'debug'
+plugin.map 'ptwatch start', :action => 'startfeed'
+plugin.map 'ptwatch stop',  :action => 'stopfeed'
+plugin.map 'ptwatch help',  :action => 'debug'
