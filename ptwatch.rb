@@ -41,7 +41,7 @@ class PTWatchPlugin < Plugin
   def list(m, params)
     if get_stored_feeds.size > 0
       get_stored_feeds.each { |feed|
-        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update at #{get_value("nextupdate", feed)}. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{get_value('timer', feed)}"
+        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update at #{get_value("nextupdate", feed)}. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{@feed['#{feed}']}"
       }
     else
       m.reply "I am not following any RSS feeds. Add some!"
