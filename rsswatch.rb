@@ -10,7 +10,7 @@ require 'simple-rss'
 require 'open-uri'
 require 'htmlentities'
 
-class PTWatchPlugin < Plugin
+class RSSWatchPlugin < Plugin
   def initialize
     super
     class << @registry
@@ -22,27 +22,31 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    BotConfig.register BotConfigIntegerValue.new('ptwatch.update',
+    BotConfig.register BotConfigIntegerValue.new('rsswatch.update',
       :default => 600, :validate => Proc.new{|v| v > 0},
       :desc => "Number of seconds between RSS Polling")
     
-    @update_freq = @bot.config['ptwatch.update']
+    @update_freq = @bot.config['rsswatch.update']
     @timer       = Hash.new
     
     startfeed
   end
 
   def startfeed
-    get_stored_feeds.each_with_index { |feed, i| 
-      set_timer(@update_freq + (i+1)*60, feed)
-    } if get_stored_feeds.size > 0
+    if get_stored_feeds.size > 0
+      get_stored_feeds.each_with_index { |feed, i| set_timer(@update_freq + (i+1)*60, feed) }
+    end
   end
   
   def list(m, params)
     if get_stored_feeds.size > 0
-      get_stored_feeds.each { |feed|
-        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update at #{get_value("nextupdate", feed)}. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{@timer[feed]}"
-      }
+      get_stored_feeds.each do |feed|
+        reply = "Following #{get_value('name', feed)} "
+        reply << "Next update at Next update at #{get_value("nextupdate", feed)} "
+        reply << "RSS Feed: #{get_value('feed', feed)}. "
+        reply << "Timer ID: #{@timer[feed]}"
+        m.reply reply 
+      end
     else
       m.reply "I am not following any RSS feeds. Add some!"
     end
@@ -65,7 +69,7 @@ class PTWatchPlugin < Plugin
         @bot.say m.channel, "I am already following #{feed}"
       end
     rescue Exception => e
-      @bot.say m.channel, "the plugin PTWatchPlugin failed #{e.to_s}"
+      @bot.say m.channel, "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
   
@@ -93,7 +97,7 @@ class PTWatchPlugin < Plugin
       end
       save_value(feed, 'lastupdate', rss.updated)
     rescue Exception => e
-      @bot.say get_value(feed, 'channel'), "the plugin PTWatchPlugin failed #{e.to_s}"
+      @bot.say get_value(feed, 'channel'), "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
 
@@ -103,7 +107,9 @@ class PTWatchPlugin < Plugin
   end
   
   def help(plugin, topic="")
-    "ptwatch follow <feed> => Follow feed.\nptwatch remove <feed> => Removes a feed from the list of feeds I'm following\nptwatch list => Lists the RSS feeds I'm following"
+    message = "rsswatch follow <feed> => Follow feed.\n"
+    message << "rsswatch remove <feed> => Removes a feed from the list of feeds I'm following\n"
+    message << "rsswatch list => Lists the RSS feeds I'm following"
   end
   
   def save_value(prefix,identifier, val)
@@ -129,8 +135,8 @@ class PTWatchPlugin < Plugin
 end
 
 # Begin Plugin Instantiation.
-plugin = PTWatchPlugin.new
-plugin.map 'ptwatch add :feed',    :action => 'add'
-plugin.map 'ptwatch remove :feed', :action => 'remove'
-plugin.map 'ptwatch list',         :action => 'list'
-plugin.map 'ptwatch help',         :action => 'help'
+plugin = RSSWatchPlugin.new
+plugin.map 'rsswatch add :feed',    :action => 'add'
+plugin.map 'rsswatch remove :feed', :action => 'remove'
+plugin.map 'rsswatch list',         :action => 'list'
+plugin.map 'rsswatch help',         :action => 'help'
