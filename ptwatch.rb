@@ -22,44 +22,35 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    Config.register Config::StringValue.new('ptwatch.url',:default => "https://www.pivotaltracker.com/projects/344511/activities/d5a0f1e5f569ad6926a8ba1ae8f8d629", :desc => 'RSS Feed of the pivotal tracker page')
-    Config.register Config::StringValue.new('ptwatch.channel',:default => "#ctp", :desc => 'Channel to report updates')
     Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 600, :desc => 'number of seconds to check (5 minutes is the default)')
 
     @last_updated = Time.now - 3600
-    @timer = nil
+    @timer = Hash.new
+    
+    startfeed
   end
 
-  def startfeed(m, params)
-    if @timer[feed].nil?
-    	set_timer(@bot.config['ptwatch.seconds'], feed)
-    else
-      m.reply "I'm already watching your project with timer #{@timer[feed].to_s}"
+  def startfeed
+    time_frame = @bot.config['ptwatch.seconds']
+    if get_stored_feeds.size > 0
+      get_stored_feeds.each { |feed| 
+        set_timer(feed, time_frame)
+        time_frame += 60
+      }
     end
   end
 
   def debug(m, params)
-    m.reply "the current timer is: #{@timer.to_s} - lastupdated = #{@last_updated.to_s}"
+    @timer.each { |key| m.reply "the current timer is: #{@timer[key].to_s} - lastupdated = #{get_value('lastupdate', key).to_s}" }
   end
   
   def list(m, params)
-    feed_count = 0
-    @registry.keys.each { |key|
-      if key =~ /feed\|/
-        feed = feed_from_key_value(key.to_s)
-        m.reply("Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update in #{(get_value("nextupdate", feed).to_i - Time.now.strftime("%Y%m%d%H%M%S").to_i) / 60} minutes. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{get_value('timer', feed)}")
-        feed_count += 1
-      end
-    }
-    if feed_count == 0
-      m.reply("I am not following any RSS feeds. Add some!")
-    end
-  end
-
-  def stopfeed(m, params)
-    if @timer
-      @bot.timer.remove(@timer)
-      m.reply "no longer watching PT, stopping timer #{@timer.to_s}"
+    if get_stored_feeds.size > 0
+      get_stored_feeds.each { |feed|
+        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update in #{(get_value("nextupdate", feed).to_i - Time.now.strftime("%Y%m%d%H%M%S").to_i) / 60} minutes. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{get_value('timer', feed)}"
+      }
+    else
+      m.reply "I am not following any RSS feeds. Add some!"
     end
   end
   
@@ -67,33 +58,32 @@ class PTWatchPlugin < Plugin
     begin
       feed = params[:feed]
       rss = SimpleRSS.parse open(feed)
-    
-      save_value('name', feed, rss.channel.title)
-      save_value('feed', feed, feed)
-      save_value('channel', feed, m.channel.downcase)
-      save_value('lastupdate', feed, rss.updated)
-      save_value('timer', feed, set_timer(@bot.config['ptwatch.seconds'], feed))
-    
-      m.reply "I am now following #{rss.channel.title}"
+      
+      if get_value('feed', feed).nil?
+        save_value('name', feed, rss.channel.title)
+        save_value('feed', feed, feed)
+        save_value('channel', feed, m.channel.downcase)
+        save_value('lastupdate', feed, rss.updated)
+        set_timer(@bot.config['ptwatch.seconds'], feed)
+        m.reply "I am now following #{feed}"
+      else
+        @bot.say m.channel, "I am already following #{feed}"
+      end
     rescue Exception => e
       @bot.say m.channel, "the plugin PTWatchPlugin failed #{e.to_s}"
     end
   end
   
   def remove(m, params)
-    feed       = params[:feed]
-    action_id  = get_value('timer', feed)
-    feed_title = get_value('name', feed)
-    
-    if action_id
-      @bot.timer.remove(action_id)
+    feed = params[:feed]
+    if @timer["#{feed}"]
+      @bot.timer.remove(@timer["#{feed}"])
       @registry.delete("name|#{feed}")
       @registry.delete("nextupdate|#{feed}")
       @registry.delete("lastupdate|#{feed}")
-      @registry.delete("action|#{feed}")
       @registry.delete("channel|#{feed}")
       @registry.delete("feed|#{feed}")
-      m.reply "#{feed_title} is no longer being followed."
+      m.reply "#{feed} is no longer being followed."
     else
       m.reply "I am not following that RSS feed."
     end
@@ -114,7 +104,7 @@ class PTWatchPlugin < Plugin
 
   def cleanup
     super
-    @bot.timer.remove(@timer)
+    @timer.each { |key| @bot.timer.remove[@timer["#{key}"]] }
   end
   
   def help(plugin, topic="")
@@ -129,8 +119,18 @@ class PTWatchPlugin < Plugin
     @registry["#{prefix}|#{identifier}"]
   end
 
+  def get_stored_feeds
+    feeds = Array.new
+    @registry.keys.each { |key| feeds.push = key.split("|")[1] if key =~ /feed\|/ }
+    return feeds
+  end
+
   def set_timer(interval, feed)
-    @timer = @bot.timer.add(interval) { check_feed(feed) }
+    unless !@timer["#{feed}"].nil?
+      @timer["#{feed}"] = @bot.timer.add(interval) { check_feed(feed) }
+    else
+      m.reply "I'm already watching your project with timer #{timer[feed].to_s}"
+    end
   end
 end
 
@@ -139,6 +139,4 @@ plugin = PTWatchPlugin.new
 plugin.map 'ptwatch follow :feed', :action => 'follow'
 plugin.map 'ptwatch remove :feed', :action => 'remove'
 plugin.map 'ptwatch list',         :action => 'list'
-plugin.map 'ptwatch start',        :action => 'startfeed'
-plugin.map 'ptwatch stop',         :action => 'stopfeed'
-plugin.map 'ptwatch help',         :action => 'debug'
+plugin.map 'ptwatch help',         :action => 'help'
