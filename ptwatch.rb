@@ -22,16 +22,14 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    Config.register Config::IntegerValue.new('ptwatch.seconds', :default => 600, :desc => 'number of seconds to check (5 minutes is the default)')
+    @update_freq = 600
+    @timer       = Hash.new
 
-    @last_updated = Time.now - 3600
-    @timer = Hash.new
-    
     startfeed
   end
 
   def startfeed
-    time_frame = @bot.config['ptwatch.seconds']
+    time_frame = @update_freq.to_i
     if get_stored_feeds.size > 0
       get_stored_feeds.each { |feed| 
         set_timer(feed, time_frame)
@@ -64,7 +62,7 @@ class PTWatchPlugin < Plugin
         save_value('feed', feed, feed)
         save_value('channel', feed, m.channel.downcase)
         save_value('lastupdate', feed, rss.updated)
-        set_timer(@bot.config['ptwatch.seconds'], feed)
+        set_timer(@update_freq, feed)
         m.reply "I am now following #{feed}"
       else
         @bot.say m.channel, "I am already following #{feed}"
