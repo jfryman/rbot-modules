@@ -77,27 +77,28 @@ class RSSWatchPlugin < Plugin
         save_value('lastupdate', feed, rss.updated._dump)
         save_value('nextupdate', feed, Time.now + @update_freq)
         @timer[feed] = set_timer(@update_freq, feed)
-        m.reply "I am now following #{feed}"
+        @bot.say m.channel, "I am now following #{feed}"
       else
         @bot.say m.channel, "I am already following #{feed}"
       end
     rescue Exception => e
-      @bot.say m.channel, "the plugin RSSWatchPlugin failed #{e.to_s}"
+      @bot.say m.channel, "ADD: the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
   
   def remove(m, params)
     feed = params[:feed]
     if !get_value('feed', feed).nil?
-      m.reply "#{get_value('name', feed)} is no longer being followed."
+      @bot.say m.channel, "#{get_value('name', feed)} is no longer being followed."
       @bot.timer.remove(@timer[feed]) unless @timer[feed].nil?
       @registry.delete("name|#{feed}")
       @registry.delete("nextupdate|#{feed}")
       @registry.delete("lastupdate|#{feed}")
       @registry.delete("channel|#{feed}")
       @registry.delete("feed|#{feed}")
+      @timer[feed] = nil
     else
-      m.reply "I am not following that RSS feed."
+      @bot.say m.channel, "I am not following that RSS feed."
     end
   end
 
@@ -111,7 +112,7 @@ class RSSWatchPlugin < Plugin
       save_value('lastupdate', feed, rss.updated._dump)
       save_value('nextupdate', feed, Time.now + get_value('updatefreq', feed))
     rescue Exception => e
-      @bot.say get_value('channel', feed), "the plugin RSSWatchPlugin failed #{e.to_s}"
+      @bot.say get_value('channel', feed), "CHECK_FEED: the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
 
@@ -143,7 +144,7 @@ class RSSWatchPlugin < Plugin
     unless !@timer[feed].nil?
       @timer[feed] = @bot.timer.add(interval) { check_feed(feed) }
     else
-      m.reply "I'm already watching your project with timer #{timer[feed]}"
+      @bot.say get_value('channel', feed), "I'm already watching your project with timer #{timer[feed]}"
     end
   end
 end
