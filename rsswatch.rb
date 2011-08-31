@@ -105,12 +105,12 @@ class RSSWatchPlugin < Plugin
       rss = SimpleRSS.parse open(feed)
       new = rss.items.collect { |item| item if item[:updated] > get_value(feed, 'lastupdate')}.compact
       new.each do |item| 
-        @bot.say get_value(feed, 'channel'), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
+        @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       save_value('lastupdate', feed, rss.updated)
       save_value('nextupdate', feed, get_value('updatefreq', feed))
     rescue Exception => e
-      @bot.say get_value(feed, 'channel'), "the plugin RSSWatchPlugin failed #{e.to_s}"
+      @bot.say get_value('channel', feed), "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
 
