@@ -22,24 +22,14 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    @update_freq = 600
-    @timer       = Hash.new
-
+    (@update_freq, @timer) = (600, Hash.new)
     startfeed
   end
 
   def startfeed
-    time_frame = @update_freq.to_i
-    if get_stored_feeds.size > 0
-      get_stored_feeds.each { |feed| 
-        set_timer(feed, time_frame)
-        time_frame += 60
-      }
-    end
-  end
-
-  def debug(m, params)
-    @timer.each { |key| m.reply "the current timer is: #{@timer[key].to_s} - lastupdated = #{get_value('lastupdate', key).to_s}" }
+    get_stored_feeds.each_with_index { |feed, i| 
+      set_timer(feed, (@update_freq + ((i+1)*60)))
+    } if get_stored_feeds.size > 0
   end
   
   def list(m, params)
@@ -117,17 +107,16 @@ class PTWatchPlugin < Plugin
     @registry["#{prefix}|#{identifier}"]
   end
 
-  def get_stored_feeds
-    feeds = Array.new
+  def get_stored_feeds(feeds = Array.new)
     @registry.keys.each { |key| feeds << key.split("|")[1] if key =~ /feed\|/ }
-    return feeds
+    feeds
   end
 
   def set_timer(interval, feed)
     unless !@timer["#{feed}"].nil?
       @timer["#{feed}"] = @bot.timer.add(interval) { check_feed(feed) }
     else
-      m.reply "I'm already watching your project with timer #{timer[feed].to_s}"
+      m.reply "I'm already watching your project with timer #{timer['#{feed}'].to_s}"
     end
   end
 end
