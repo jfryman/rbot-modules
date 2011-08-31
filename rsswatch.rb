@@ -77,9 +77,9 @@ class RSSWatchPlugin < Plugin
         save_value('lastupdate', feed, rss.updated._dump)
         save_value('nextupdate', feed, Time.now + @update_freq)
         @timer[feed] = set_timer(@update_freq, feed)
-        @bot.say m.channel, "I am now following #{feed}"
+        @bot.say m.channel, "I am now following #{get_value('name', feed)}"
       else
-        @bot.say m.channel, "I am already following #{feed}"
+        @bot.say m.channel, "I am already following #{get_value('name', feed)}"
       end
     rescue Exception => e
       @bot.say m.channel, "ADD: the plugin RSSWatchPlugin failed #{e.to_s}"
