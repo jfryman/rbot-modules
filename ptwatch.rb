@@ -58,7 +58,8 @@ class PTWatchPlugin < Plugin
         save_value('feed', feed, feed)
         save_value('channel', feed, m.channel.downcase)
         save_value('lastupdate', feed, rss.updated)
-        set_timer(@update_freq, feed)
+        save_value('nextupdate', feed, Time.now + @update_freq)
+        @timer["#{feed}"] = set_timer(@update_freq, feed)
         m.reply "I am now following #{feed}"
       else
         @bot.say m.channel, "I am already following #{feed}"
