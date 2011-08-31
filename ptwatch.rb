@@ -22,7 +22,9 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    (@update_freq, @timer) = (600, Hash.new)
+    @update_freq = 600
+    @timer       = Hash.new
+    
     startfeed
   end
 
