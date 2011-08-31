@@ -41,7 +41,7 @@ class PTWatchPlugin < Plugin
   def list(m, params)
     if get_stored_feeds.size > 0
       get_stored_feeds.each { |feed|
-        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update at #{get_value("nextupdate", feed)}. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{@timer['#{feed}']}"
+        m.reply "Following #{get_value("name", feed)} for channel #{get_value("channel", feed)}.  Next update at #{get_value("nextupdate", feed)}. RSS Feed: #{get_value('feed', feed)}. Timer ID: #{@timer[feed]}"
       }
     else
       m.reply "I am not following any RSS feeds. Add some!"
@@ -59,7 +59,7 @@ class PTWatchPlugin < Plugin
         save_value('channel', feed, m.channel.downcase)
         save_value('lastupdate', feed, rss.updated)
         save_value('nextupdate', feed, Time.now + @update_freq)
-        @timer["#{feed}"] = set_timer(@update_freq, feed)
+        @timer[feed] = set_timer(@update_freq, feed)
         m.reply "I am now following #{feed}"
       else
         @bot.say m.channel, "I am already following #{feed}"
@@ -72,7 +72,7 @@ class PTWatchPlugin < Plugin
   def remove(m, params)
     feed = params[:feed]
     if !get_value('feed', feed).nil?
-      @bot.timer.remove(@timer["#{feed}"]) unless @timer["#{feed}"].nil?
+      @bot.timer.remove(@timer[feed]) unless @timer[feed].nil?
       @registry.delete("name|#{feed}")
       @registry.delete("nextupdate|#{feed}")
       @registry.delete("lastupdate|#{feed}")
@@ -99,7 +99,7 @@ class PTWatchPlugin < Plugin
 
   def cleanup
     super
-    @timer.each { |key| @bot.timer.remove[@timer["#{key}"]] }
+    @timer.each { |feed| @bot.timer.remove[@timer[feed]] }
   end
   
   def help(plugin, topic="")
@@ -120,8 +120,8 @@ class PTWatchPlugin < Plugin
   end
 
   def set_timer(interval, feed)
-    unless !@timer["#{feed}"].nil?
-      @timer["#{feed}"] = @bot.timer.add(interval) { check_feed(feed) }
+    unless !@timer[feed].nil?
+      @timer[feed] = @bot.timer.add(interval) { check_feed(feed) }
     else
       m.reply "I'm already watching your project with timer #{timer['#{feed}'].to_s}"
     end
