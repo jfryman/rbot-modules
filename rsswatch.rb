@@ -110,7 +110,7 @@ class RSSWatchPlugin < Plugin
         @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       save_value('lastupdate', feed, rss.updated._dump)
-      save_value('nextupdate', feed, Time.now + get_value('updatefreq', feed))
+      save_value('nextupdate', feed, Time.now + Time._load(get_value('updatefreq', feed)))
 #    rescue Exception => e
 #      @bot.say get_value('channel', feed), "CHECK_FEED: the plugin RSSWatchPlugin failed #{e.to_s}"
 #    end
