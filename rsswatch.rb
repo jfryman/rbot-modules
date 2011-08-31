@@ -29,6 +29,14 @@ class RSSWatchPlugin < Plugin
     startfeed
   end
 
+  def debug
+    reply = String.new
+    reply << "Local Timer Data: #{@timer}\n"
+    reply << "Registry Data: \n"
+    @registry.each { |x| reply << "#{x}\n"}  
+    m.reply reply
+  end
+
   def startfeed
     if get_stored_feeds.size > 0
       get_stored_feeds.each_with_index do |feed, i| 
@@ -42,7 +50,7 @@ class RSSWatchPlugin < Plugin
     if get_stored_feeds.size > 0
       get_stored_feeds.each do |feed|
         reply = "#{get_value('name', feed)} :: "
-        reply << "Next check at #{get_value("nextupdate", feed)} :: "
+        reply << "Next check at #{get_value('nextupdate', feed)} :: "
         reply << "RSS Feed: #{get_value('feed', feed)}. :: "
         reply << "Timer ID: #{@timer[feed]}"
         m.reply reply 
@@ -130,7 +138,7 @@ class RSSWatchPlugin < Plugin
     unless !@timer[feed].nil?
       @timer[feed] = @bot.timer.add(interval) { check_feed(feed) }
     else
-      m.reply "I'm already watching your project with timer #{timer['#{feed}'].to_s}"
+      m.reply "I'm already watching your project with timer #{timer[feed]}"
     end
   end
 end
@@ -141,3 +149,4 @@ plugin.map 'rsswatch add :feed',    :action => 'add'
 plugin.map 'rsswatch remove :feed', :action => 'remove'
 plugin.map 'rsswatch list',         :action => 'list'
 plugin.map 'rsswatch help',         :action => 'help'
+plugin.map 'rsswatch debug',        :action => 'debug'
