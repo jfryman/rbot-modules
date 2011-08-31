@@ -26,7 +26,7 @@ class PTWatchPlugin < Plugin
       :default => 600, :validate => Proc.new{|v| v > 0},
       :desc => "Number of seconds between RSS Polling")
     
-    @update_freq = @bot.config.@bot.config['ptwatch.update']
+    @update_freq = @bot.config['ptwatch.update']
     @timer       = Hash.new
     
     startfeed
