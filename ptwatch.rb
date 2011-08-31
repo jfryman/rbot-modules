@@ -70,8 +70,8 @@ class PTWatchPlugin < Plugin
   
   def remove(m, params)
     feed = params[:feed]
-    if feed == get_value('feed', feed)
-      @bot.timer.remove(@timer["#{feed}"])
+    if !get_value('feed', feed).nil?
+      @bot.timer.remove(@timer["#{feed}"]) unless @timer["#{feed}"].nil?
       @registry.delete("name|#{feed}")
       @registry.delete("nextupdate|#{feed}")
       @registry.delete("lastupdate|#{feed}")
