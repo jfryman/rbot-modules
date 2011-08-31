@@ -74,7 +74,7 @@ class RSSWatchPlugin < Plugin
         save_value('name', feed, rss.channel.title)
         save_value('feed', feed, feed)
         save_value('channel', feed, m.channel.downcase)
-        save_value('lastupdate', feed, rss.updated)
+        save_value('lastupdate', feed, rss.updated._dump)
         save_value('nextupdate', feed, Time.now + @update_freq)
         @timer[feed] = set_timer(@update_freq, feed)
         m.reply "I am now following #{feed}"
@@ -104,12 +104,12 @@ class RSSWatchPlugin < Plugin
   def check_feed(feed)
     begin
       rss = SimpleRSS.parse open(feed)
-      new = rss.items.collect { |item| item if item[:updated] > get_value('lastupdate', feed)}.compact
+      new = rss.items.collect { |item| item if item[:updated] > Time._load(get_value('lastupdate', feed))}.compact
       new.each do |item| 
         @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
-      save_value('lastupdate', feed, rss.updated)
-      save_value('nextupdate', feed, get_value('updatefreq', feed))
+      save_value('lastupdate', feed, rss.updated._dump)
+      save_value('nextupdate', feed, Time.now + get_value('updatefreq', feed))
     rescue Exception => e
       @bot.say get_value('channel', feed), "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
