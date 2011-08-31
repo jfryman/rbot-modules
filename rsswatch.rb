@@ -31,11 +31,10 @@ class RSSWatchPlugin < Plugin
 
   def debug(m, params)
     reply = String.new
-    reply << "Local Timer Data:\n"
-    @timer.each { |key, value| reply << "#{key} => #{value}\n" }
-    reply << "Registry Data:\n"
-    @registry.each { |key, value| reply << "#{key} => #{value}\n"}  
-    m.reply reply
+    m.reply "Local Timer Data:\n"
+    @timer.each { |key, value| m.reply "#{key} => #{value}\n" }
+    m.reply "Registry Data:\n"
+    @registry.each { |key, value| m.reply "#{key} => #{value}\n"}  
   end
 
   def startfeed
