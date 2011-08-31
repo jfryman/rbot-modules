@@ -42,10 +42,11 @@ class RSSWatchPlugin < Plugin
 
   def startfeed
     if get_stored_feeds.size > 0
-      get_stored_feeds.each_with_index do |feed, i| 
-        set_timer(@update_freq + (i+1)*60, feed)
-        save_value('nextupdate', feed, Time.now + (@update_freq + (i+1)*60))
-        save_value('updatefreq', feed, (@update_freq + (i+1)*60))
+      get_stored_feeds.each_with_index do |feed, i|
+        random_update = @update_freq + rand(400)
+        set_timer(random_update, feed)
+        save_value('nextupdate', feed, Time.now + random_update)
+        save_value('updatefreq', feed, random_update)
       end
     end
   end
