@@ -38,9 +38,9 @@ class RSSWatchPlugin < Plugin
   def list(m, params)
     if get_stored_feeds.size > 0
       get_stored_feeds.each do |feed|
-        reply = "Following #{get_value('name', feed)} "
-        reply << "Next check at #{get_value("nextupdate", feed)} "
-        reply << "RSS Feed: #{get_value('feed', feed)}. "
+        reply = "#{get_value('name', feed)} :: "
+        reply << "Next check at #{get_value("nextupdate", feed)} :: "
+        reply << "RSS Feed: #{get_value('feed', feed)}. :: "
         reply << "Timer ID: #{@timer[feed]}"
         m.reply reply 
       end
