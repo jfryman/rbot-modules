@@ -6,6 +6,7 @@ require 'rubygems'
 require 'simple-rss'
 require 'open-uri'
 require 'htmlentities'
+require 'time'
 
 class RSSWatchPlugin < Plugin
   def initialize
@@ -74,7 +75,7 @@ class RSSWatchPlugin < Plugin
         save_value('name', feed, rss.channel.title)
         save_value('feed', feed, feed)
         save_value('channel', feed, m.channel.downcase)
-        save_value('lastupdate', feed, rss.updated._dump)
+        save_value('lastupdate', feed, rss.updated)
         save_value('nextupdate', feed, Time.now + @update_freq)
         @timer[feed] = set_timer(@update_freq, feed)
         @bot.say m.channel, "I am now following #{get_value('name', feed)}"
@@ -105,12 +106,12 @@ class RSSWatchPlugin < Plugin
   def check_feed(feed)
 #    begin
       rss = SimpleRSS.parse open(feed)
-      new = rss.items.collect { |item| item if item[:updated] > Time._load(get_value('lastupdate', feed))}.compact
+      new = rss.items.collect { |item| item if item[:updated] > Time.parse(get_value('lastupdate', feed))}.compact
       new.each do |item| 
         @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
-      save_value('lastupdate', feed, rss.updated._dump)
-      save_value('nextupdate', feed, Time.now + Time._load(get_value('updatefreq', feed)))
+      save_value('lastupdate', feed, rss.updated)
+      save_value('nextupdate', feed, Time.now + Time.parse(get_value('updatefreq', feed)))
 #    rescue Exception => e
 #      @bot.say get_value('channel', feed), "CHECK_FEED: the plugin RSSWatchPlugin failed #{e.to_s}"
 #    end
