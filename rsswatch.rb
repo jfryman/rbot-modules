@@ -39,7 +39,7 @@ class RSSWatchPlugin < Plugin
     if get_stored_feeds.size > 0
       get_stored_feeds.each do |feed|
         reply = "Following #{get_value('name', feed)} "
-        reply << "Next update at Next update at #{get_value("nextupdate", feed)} "
+        reply << "Next check at #{get_value("nextupdate", feed)} "
         reply << "RSS Feed: #{get_value('feed', feed)}. "
         reply << "Timer ID: #{@timer[feed]}"
         m.reply reply 
@@ -93,6 +93,7 @@ class RSSWatchPlugin < Plugin
         @bot.say get_value(feed, 'channel'), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       save_value(feed, 'lastupdate', rss.updated)
+      save_value(feed, 'nextupdate', Time.now + @update_freq)
     rescue Exception => e
       @bot.say get_value(feed, 'channel'), "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
