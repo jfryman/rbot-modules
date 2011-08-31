@@ -1,9 +1,6 @@
 # :title: Pivotal Tracker RSS feed reader for rbot
 # Licensed under the terms of the GNU General Public License v2 or higher
 # Copyright Aziz Shamim and James Fryman 2011
-#
-# TODO: Refactor out the channel config, add a per channel comm
-# TODO: Refactor out the Config.register, add a per channel config
 
 require 'rubygems'
 require 'simple-rss'
