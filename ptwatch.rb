@@ -22,16 +22,20 @@ class PTWatchPlugin < Plugin
       end
     end
     
-    @update_freq = 600
+    BotConfig.register BotConfigIntegerValue.new('ptwatch.update',
+      :default => 600, :validate => Proc.new{|v| v > 0},
+      :desc => "Number of seconds between RSS Polling")
+    
+    @update_freq = @bot.config.@bot.config['ptwatch.update']
     @timer       = Hash.new
     
     startfeed
   end
 
   def startfeed
-    get_stored_feeds.each_with_index { |feed, i| 
-      set_timer(feed, (@update_freq + ((i+1)*60)))
-    } if get_stored_feeds.size > 0
+#    get_stored_feeds.each_with_index { |feed, i| 
+#      set_timer(feed, (@update_freq + ((i+1)*60)))
+#    } if get_stored_feeds.size > 0
   end
   
   def list(m, params)
