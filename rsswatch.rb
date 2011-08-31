@@ -30,11 +30,14 @@ class RSSWatchPlugin < Plugin
   end
 
   def debug(m, params)
-    reply = String.new
-    m.reply "Local Timer Data:\n"
-    @timer.each { |key, value| m.reply "#{key} => #{value}\n" }
-    m.reply "Registry Data:\n"
-    @registry.each { |key, value| m.reply "#{key} => #{value}\n"}  
+    if @timer.size > 0 && @registry.size > 0 
+      m.reply "Local Timer Data:\n"
+      @timer.each { |key, value| m.reply "#{key} => #{value}\n" }
+      m.reply "Registry Data:\n"
+      @registry.each { |key, value| m.reply "#{key} => #{value}\n"}
+    else
+      m.reply "There has been no data stored for RSSWatchPlugin yet"
+    end
   end
 
   def startfeed
