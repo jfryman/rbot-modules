@@ -45,6 +45,7 @@ class RSSWatchPlugin < Plugin
       get_stored_feeds.each_with_index do |feed, i| 
         set_timer(@update_freq + (i+1)*60, feed)
         save_value('nextupdate', feed, Time.now + (@update_freq + (i+1)*60))
+        save_value('updatefreq', feed, (@update_freq + (i+1)*60))
       end
     end
   end
@@ -107,7 +108,7 @@ class RSSWatchPlugin < Plugin
         @bot.say get_value(feed, 'channel'), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       save_value('lastupdate', feed, rss.updated)
-      save_value('nextupdate', feed, Time.now + @update_freq)
+      save_value('nextupdate', feed, get_value('updatefreq', feed))
     rescue Exception => e
       @bot.say get_value(feed, 'channel'), "the plugin RSSWatchPlugin failed #{e.to_s}"
     end
