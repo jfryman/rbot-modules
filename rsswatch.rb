@@ -21,7 +21,7 @@ class RSSWatchPlugin < Plugin
     end
     
     BotConfig.register BotConfigIntegerValue.new('rsswatch.update',
-      :default => 20, :validate => Proc.new{|v| v > 0},
+      :default => 600, :validate => Proc.new{|v| v > 0},
       :desc => "Number of seconds between RSS Polling")
     
     @update_freq = @bot.config['rsswatch.update']
@@ -44,7 +44,7 @@ class RSSWatchPlugin < Plugin
   def startfeed
     if get_stored_feeds.size > 0
       get_stored_feeds.each_with_index do |feed, i|
-        random_update = @update_freq + rand(5)
+        random_update = @update_freq + rand(300)
         set_timer(random_update, feed)
         save_value('nextupdate', feed, Time.now + random_update)
         save_value('updatefreq', feed, random_update)
@@ -104,7 +104,7 @@ class RSSWatchPlugin < Plugin
   end
 
   def check_feed(feed)
-#    begin
+    begin
       rss = SimpleRSS.parse open(feed)
       new = rss.items.collect { |item| item if item[:updated] > Time.parse(get_value('lastupdate', feed))}.compact
       new.each do |item| 
@@ -112,9 +112,9 @@ class RSSWatchPlugin < Plugin
       end
       save_value('lastupdate', feed, rss.updated)
       save_value('nextupdate', feed, Time.now + get_value('updatefreq', feed).to_i)
-#    rescue Exception => e
-#      @bot.say get_value('channel', feed), "CHECK_FEED: the plugin RSSWatchPlugin failed #{e.to_s}"
-#    end
+    rescue Exception => e
+      @bot.say get_value('channel', feed), "CHECK_FEED: the plugin RSSWatchPlugin failed #{e.to_s}"
+    end
   end
 
   def cleanup
