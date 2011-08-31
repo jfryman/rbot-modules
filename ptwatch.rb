@@ -121,7 +121,7 @@ class PTWatchPlugin < Plugin
 
   def get_stored_feeds
     feeds = Array.new
-    @registry.keys.each { |key| feeds.push = key.split("|")[1] if key =~ /feed\|/ }
+    @registry.keys.each { |key| feeds << key.split("|")[1] if key =~ /feed\|/ }
     return feeds
   end
 
