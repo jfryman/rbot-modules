@@ -33,9 +33,9 @@ class PTWatchPlugin < Plugin
   end
 
   def startfeed
-#    get_stored_feeds.each_with_index { |feed, i| 
-#      set_timer(feed, (@update_freq + ((i+1)*60)))
-#    } if get_stored_feeds.size > 0
+    get_stored_feeds.each_with_index { |feed, i| 
+      set_timer(@update_freq + (i+1)*60, feed)
+    } if get_stored_feeds.size > 0
   end
   
   def list(m, params)
@@ -72,13 +72,13 @@ class PTWatchPlugin < Plugin
   def remove(m, params)
     feed = params[:feed]
     if !get_value('feed', feed).nil?
+      m.reply "#{get_value('name', feed)} is no longer being followed."
       @bot.timer.remove(@timer[feed]) unless @timer[feed].nil?
       @registry.delete("name|#{feed}")
       @registry.delete("nextupdate|#{feed}")
       @registry.delete("lastupdate|#{feed}")
       @registry.delete("channel|#{feed}")
       @registry.delete("feed|#{feed}")
-      m.reply "#{feed} is no longer being followed."
     else
       m.reply "I am not following that RSS feed."
     end
