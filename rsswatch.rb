@@ -29,7 +29,7 @@ class RSSWatchPlugin < Plugin
     startfeed
   end
 
-  def debug
+  def debug(m, params)
     reply = String.new
     reply << "Local Timer Data: #{@timer}\n"
     reply << "Registry Data: \n"
