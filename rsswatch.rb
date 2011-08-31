@@ -104,7 +104,7 @@ class RSSWatchPlugin < Plugin
   def check_feed(feed)
     begin
       rss = SimpleRSS.parse open(feed)
-      new = rss.items.collect { |item| item if item[:updated] > get_value(feed, 'lastupdate')}.compact
+      new = rss.items.collect { |item| item if item[:updated] > get_value('lastupdate', feed)}.compact
       new.each do |item| 
         @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
