@@ -19,14 +19,14 @@ class RSSWatchPlugin < Plugin
         val
       end
     end
-    
+
     BotConfig.register BotConfigIntegerValue.new('rsswatch.update',
       :default => 600, :validate => Proc.new{|v| v > 0},
       :desc => "Number of seconds between RSS Polling")
-    
+
     @update_freq = @bot.config['rsswatch.update']
     @timer       = Hash.new
-    
+
     startfeed
   end
 
@@ -51,7 +51,7 @@ class RSSWatchPlugin < Plugin
       end
     end
   end
-  
+
   def list(m, params)
     if get_stored_feeds.size > 0
       get_stored_feeds.each do |feed|
@@ -65,12 +65,12 @@ class RSSWatchPlugin < Plugin
       m.reply "I am not following any RSS feeds. Add some!"
     end
   end
-  
+
   def add(m, params)
     begin
       feed = params[:feed]
       rss = SimpleRSS.parse open(feed)
-      
+
       if get_value('feed', feed).nil?
         save_value('name', feed, rss.channel.title)
         save_value('feed', feed, feed)
@@ -86,7 +86,7 @@ class RSSWatchPlugin < Plugin
       @bot.say m.channel, "ADD: the plugin RSSWatchPlugin failed #{e.to_s}"
     end
   end
-  
+
   def remove(m, params)
     feed = params[:feed]
     if !get_value('feed', feed).nil?
@@ -106,8 +106,8 @@ class RSSWatchPlugin < Plugin
   def check_feed(feed)
     begin
       rss = SimpleRSS.parse open(feed)
-      new = rss.items.collect { |item| item if item[:updated] > Time.parse(get_value('lastupdate', feed))}.compact
-      new.each do |item| 
+      new = rss.items.collect { |item| item if item[:updated] > Time.parse(get_value('lastupdate', feed))}.compact.reverse
+      new.each do |item|
         @bot.say get_value('channel', feed), "#{HTMLEntities.new.decode(item.title)} :: #{item.link}"
       end
       save_value('lastupdate', feed, rss.updated)
@@ -121,17 +121,17 @@ class RSSWatchPlugin < Plugin
     super
     @timer.each { |feed| @bot.timer.remove[@timer[feed]] }
   end
-  
+
   def help(plugin, topic="")
     message = "rsswatch follow <feed> => Follow feed.\n"
     message << "rsswatch remove <feed> => Removes a feed from the list of feeds I'm following\n"
     message << "rsswatch list => Lists the RSS feeds I'm following"
   end
-  
+
   def save_value(prefix,identifier, val)
     @registry["#{prefix}|#{identifier}"] = val
   end
-  
+
   def get_value(prefix,identifier)
     @registry["#{prefix}|#{identifier}"]
   end
